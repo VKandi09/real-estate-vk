@@ -12,7 +12,6 @@ const Signup = () => {
       ...formdata,
       [e.target.id] : e.target.value
     });
-    // console.log(formdata);
   }
 
   const handleSubmit = async (e) => {
