@@ -9,12 +9,15 @@ import { app } from "../firebase";
 
 const CreateListing = () => {
   const [files, setFiles] = useState([]);
+  const [uploadingImageError, setUploadingImageError] = useState("");
+  const [uploading, setUploading] = useState(false);
   const [formData, setFormData] = useState({
     imageUrls: [],
   });
 
   const handleImageUpload = () => {
-    if (files.length > 0 && files.length < 7) {
+    if (files.length > 0 && files.length + formData.imageUrls.length < 7) {
+        setUploading(true);
       const promises = [];
       for (let i = 0; i < files.length; i++) {
         promises.push(storeImage(files[i]));
@@ -25,12 +28,16 @@ const CreateListing = () => {
             ...formData,
             imageUrls: formData.imageUrls.concat(urls),
           });
+          setUploading(false);
         })
         .catch((err) => {
-          console.log(err);
+            console.log(err);
+          setUploadingImageError("Image upload failed. (2 MB max per image)");
+          setUploading(false);
         });
     } else {
-        alert("Please select between 1 and 6 images.")
+        setUploadingImageError("You can only upload 6 images per listing");
+        setUploading(false);
     }};
 
     const storeImage = async (file) => {
@@ -58,6 +65,13 @@ const CreateListing = () => {
         );
       });
     };
+
+    const handleRemoveImage = (index) => {
+        setFormData({
+            ...formData,
+            imageUrls: formData.imageUrls.filter((_, i) => ( i !== index))
+        })
+    }
 
   return (
     <main className="p-3 max-w-4xl mx-auto">
@@ -181,13 +195,24 @@ const CreateListing = () => {
               multiple
             />
             <button
+              disabled={uploading}
               onClick={handleImageUpload}
               type="button"
               className="p-3 text-green-700 border border-green-700 rounded uppercase hover:shadow-lg disabled:opacity-80"
             >
-              Upload
+              { uploading ? 'uploading..' : 'upload'}
             </button>
           </div>
+          <p className="text-red-700 text-sm">{ uploadingImageError ?? uploadingImageError }</p>
+          { formData.imageUrls.length > 0 &&
+            formData.imageUrls.map((url, index) => (
+                <div key={url} className="flex justify-between p-3 border items-center">
+                    <img src={url} alt="listing image" className="w-20 h-20 object-contain rounded-lg"/>
+                    <button type="button" onClick={() => handleRemoveImage(index)} className="text-red-700 round-lg uppercase hover:opacity-75">
+                        Delete
+                    </button>
+                </div>
+          ))}
           <p className="text-red-700 text-sm"></p>
           <button className="p-3 bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 disabled:opacity-80">
             Create Listing
