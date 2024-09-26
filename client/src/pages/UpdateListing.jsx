@@ -51,7 +51,7 @@ import {
             setFormData(data);
         };
         fetchListing();
-    }, []);
+    }, [params.listingId]);
   
     const handleImageUpload = () => {
       if (files.length > 0 && files.length + formData.imageUrls.length < 7) {
@@ -175,6 +175,7 @@ import {
           return;
         }
         navigate(`/listing/${data._id}`);
+
       } catch (error) {
         setError(error.message);
         setLoading(false);
