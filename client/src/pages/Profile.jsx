@@ -28,6 +28,8 @@ const Profile = () => {
   const [filePercentage, setFilePercentage] = useState(0);
   const [formData, setFormData] = useState({});
   const [updateSuccess, setUpdateSuccess] = useState(false);
+  const [showListingsError, setShowListingsError] = useState(false);
+  const [userListings, setUserListings] = useState([]);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -36,6 +38,9 @@ const Profile = () => {
     }
   }, [file]);
 
+  // console.log(formData);
+  console.log(userListings);
+  
   const handleFileUpload = (file) => {
     const storage = getStorage(app);
 
@@ -131,6 +136,29 @@ const Profile = () => {
     }
   };
 
+  const handleShowListings = async () => {
+    try {
+      setShowListingsError(false);
+      const res = await fetch(`/api/user/listings/${currentUser._id}`);
+      const data = await res.json();
+
+      if(data.success === false){
+        setShowListingsError(true);
+        return;
+      }
+
+      setUserListings(data);
+      
+    } catch (error) {
+      setShowListingsError(true);
+    }
+  };
+
+  const handleListingsDelete = () => {
+
+  };
+
+
   return (
     <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-3xl font-semibold text-center my-4">Profile</h1>
@@ -195,16 +223,45 @@ const Profile = () => {
           Create Listing
         </Link>
       </form>
-      <p className="text-red-700 mt-5">{error ? error : ""}</p>
-      <p className="text-green-700 mt-5">
-        {updateSuccess ? "Profile updated successfully" : ""}
-      </p>
       <div className="flex justify-between mt-4">
         <span onClick={handleDelete} className="text-red-700 cursor-pointer">
           Delete Account
         </span>
         <span onClick={handleSignOut} className="text-red-700 cursor-pointer">Sign Out?</span>
       </div>
+      <button type="button" onClick={handleShowListings} className="text-green-700 mt-5 w-full">
+        Show listings
+      </button>
+      <p className="text-red-700 mt-5">{ showListingsError ? 'Error showing listings' : ""}</p>
+      <p className="text-red-700 mt-5">{error ? error : ""}</p>
+      <p className="text-green-700 mt-5">
+        {updateSuccess ? "Profile updated successfully" : ""}
+      </p>
+      {userListings && userListings.length > 0 && (
+        <div className="flex flex-col gap-4">
+          <h1 className="text-center mt-5 font-semibold text-2xl">Your Listings</h1>
+          {userListings.map((item) => (
+            <div key={item._id} className="border rounded-lg p-3 flex justify-between items-center gap-4">
+              <Link to={`/listing/${item._id}`}>
+                <img src={item.imageUrls[0]} alt="listing cover" className="w-16 h-16 object-contain"/>
+              </Link>
+              <Link to={`/listing/${item._id}`}>
+                <p className="text-slate-700 font-semibold hover:underline truncate flex-1">{item.name}</p>
+              </Link>
+              <div className="flex flex-col items-center">
+                <button className="text-red-700" onClick={() => handleListingsDelete(item._id)}>
+                  Delete
+                </button>
+                <Link to={`/update-listing/${item._id}`}>
+                  <button className="text-green-700">
+                    Edit
+                  </button>
+                </Link>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
