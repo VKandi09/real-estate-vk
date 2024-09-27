@@ -55,8 +55,17 @@ const ListingItem = ({ listing }) => {
 
 ListingItem.propTypes = {
     listing: PropTypes.shape({
-      userRef: PropTypes.string.isRequired,
+      _id: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired,
+      description: PropTypes.string.isRequired,
+      address: PropTypes.string.isRequired,
+      regularPrice: PropTypes.number.isRequired,
+      discountPrice: PropTypes.number.isRequired,
+      bedrooms: PropTypes.number.isRequired,
+      bathrooms: PropTypes.number.isRequired,
+      imageUrls: PropTypes.array.isRequired,
+      offer: PropTypes.bool.isRequired,
+      type: PropTypes.string.isRequired,
     }).isRequired,
 };
 export default ListingItem;

@@ -13,7 +13,6 @@ const Search = () => {
         sort: "created_at",
         order: "desc"
     });
-    // console.log(sidebardata);
 
     const [loading, setLoading] = useState(false);
     const [listings, setListings] = useState([]);
@@ -100,9 +99,20 @@ const Search = () => {
         navigate(`/search/${searchQuery}`);
     };
 
-    const onShowMoreClick = () => {
-
-    }
+    const onShowMoreClick = async () => {
+      const numberOfListings = listings.length;
+      const startIndex = numberOfListings;
+      const urlParams = new URLSearchParams(location.search);
+      urlParams.set('startIndex', startIndex);
+      const searchQuery = urlParams.toString();
+      const res = await fetch(`/api/listing/get?${searchQuery}`);
+      const data = await res.json();
+      if (data.length < 9) {
+        setShowMore(false);
+      }
+      setListings([...listings, ...data]);
+      // setShowMore(true);
+    };
 
   return (
     <div className='flex flex-col md:flex-row'>
