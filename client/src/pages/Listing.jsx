@@ -26,7 +26,7 @@ const Listing = () => {
   const params = useParams();
   const {currentUser} = useSelector((state) => state.user);
 
-  console.log(listing);
+  // console.log(listing);
 
   useEffect(() => {
     const fetchListing = async () => {

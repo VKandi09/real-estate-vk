@@ -10,7 +10,7 @@ const Header = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const urlParams = new URLSearchParams();
+    const urlParams = new URLSearchParams(window.location.search);
     urlParams.set("searchTerm", searchTerm);
     const searchQuery = urlParams.toString();
 
@@ -20,7 +20,7 @@ const Header = () => {
 
   useEffect(() => {
 
-    const urlParams = new URLSearchParams(location.search);
+    const urlParams = new URLSearchParams(window.location.search);
     const searchTermFromUrl = urlParams.get('searchTerm');
 
     if(searchTermFromUrl) {

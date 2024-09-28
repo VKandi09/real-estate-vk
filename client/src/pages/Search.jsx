@@ -18,8 +18,10 @@ const Search = () => {
     const [listings, setListings] = useState([]);
     const [showMore, setShowMore] = useState(false);
 
+    // console.log(listings);
+
     useEffect(() => {
-        const urlParams = new URLSearchParams(location.search);
+        const urlParams = new URLSearchParams(window.location.search);
         const searchTermFromUrl = urlParams.get('searchTerm');
         const typeFromUrl = urlParams.get('type');
         const parkingFromUrl = urlParams.get('parking');
@@ -42,13 +44,19 @@ const Search = () => {
 
         const fetchListings = async () => {
             setLoading(true);
+            setShowMore(false);
             const searchQuery = urlParams.toString();
             const res = await fetch(`/api/listing/get?${searchQuery}`);
             const data = await res.json();
+            if (data.length > 8) {
+              setShowMore(true);
+            } else {
+              setShowMore(false);
+            }
             setListings(data);
             setLoading(false);
         };
-
+        console.log(listings);
         fetchListings();
 
     }, []);
@@ -96,7 +104,7 @@ const Search = () => {
         urlParams.set('order', sidebardata.order);
         const searchQuery = urlParams.toString();
 
-        navigate(`/search/${searchQuery}`);
+        navigate(`/search?${searchQuery}`);
     };
 
     const onShowMoreClick = async () => {
@@ -111,7 +119,6 @@ const Search = () => {
         setShowMore(false);
       }
       setListings([...listings, ...data]);
-      // setShowMore(true);
     };
 
   return (
@@ -236,7 +243,8 @@ const Search = () => {
             listings &&
             listings.map((listing) => (
               <ListingItem key={listing._id} listing={listing} />
-            ))}
+            )
+          )}
 
           {showMore && (
             <button
