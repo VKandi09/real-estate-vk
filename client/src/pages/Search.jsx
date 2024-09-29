@@ -21,7 +21,7 @@ const Search = () => {
     // console.log(listings);
 
     useEffect(() => {
-        const urlParams = new URLSearchParams(window.location.search);
+        const urlParams = new URLSearchParams(location.search);
         const searchTermFromUrl = urlParams.get('searchTerm');
         const typeFromUrl = urlParams.get('type');
         const parkingFromUrl = urlParams.get('parking');
@@ -59,7 +59,7 @@ const Search = () => {
         console.log(listings);
         fetchListings();
 
-    }, []);
+    }, [location.search]);
 
 
     const handleChange = (e) => {
